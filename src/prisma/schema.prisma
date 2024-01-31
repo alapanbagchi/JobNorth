@@ -147,6 +147,7 @@ model Job {
     updatedAt             DateTime                @updatedAt
     JobApplicantQuestions JobApplicantQuestions[]
     JobFAQ                JobFAQ[]
+    image                 String? 
 }
 
 model JobApplicantQuestions {

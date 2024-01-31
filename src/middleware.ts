@@ -1,5 +1,6 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
+import { Job } from "./prisma/generated/zod";
 
 const PREVENT_ACCESSS_IF_AUTHENTICATED = [
     "/signup",
@@ -43,3 +44,4 @@ export default auth((req) => {
 export const config = {
     matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
 }
+

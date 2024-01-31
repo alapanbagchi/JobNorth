@@ -142,7 +142,7 @@ model Job {
     description           String /// @zod.custom.use(z.string().min(1, "Job description is required"))
     responsibilities      String /// @zod.string.min(1, {message: "Job requirements are required"})
     requirements          String /// @zod.string.min(1, {message: "Job requirements are required"})
-    tags                  String[] /// @zod.custom.use(z.array(z.string().min(1, "Job tags are required")))
+    tags                  String[] /// @zod.string.array
     createdAt             DateTime                @default(now())
     updatedAt             DateTime                @updatedAt
     JobApplicantQuestions JobApplicantQuestions[]

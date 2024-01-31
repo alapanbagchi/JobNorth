@@ -133,7 +133,10 @@ export const JobSchema = z.object({
   description: z.string().min(1, "Job description is required"),
   responsibilities: z.string().min(1, {message: "Job requirements are required"}),
   requirements: z.string().min(1, {message: "Job requirements are required"}),
-  tags: z.array(z.string().min(1, "Job tags are required")).array(),
+  /**
+   * .array
+   */
+  tags: z.string().array(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })

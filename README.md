@@ -8,3 +8,4 @@ general todo list:
 -   creating a job
 -   add /profile
 -   add /home
+-   fix fixed salary containing a min-max

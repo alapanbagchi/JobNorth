@@ -15,7 +15,7 @@ export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCo
 
 export const UserScalarFieldEnumSchema = z.enum(['id','name','email','emailVerified','password','avatar','designation','role','permissions']);
 
-export const JobScalarFieldEnumSchema = z.enum(['id','industry','title','location','locationPreference','type','employmentType','experienceLevel','minimumQualification','visaSponsorship','salaryType','salaryMin','salaryMax','salaryCurrency','salaryInterval','facilities','description','responsibilities','requirements','tags','createdAt','updatedAt']);
+export const JobScalarFieldEnumSchema = z.enum(['id','industry','title','location','locationPreference','type','employmentType','experienceLevel','minimumQualification','visaSponsorship','salaryType','salaryMin','salaryMax','salaryCurrency','salaryInterval','facilities','description','responsibilities','requirements','tags','createdAt','updatedAt','image']);
 
 export const JobApplicantQuestionsScalarFieldEnumSchema = z.enum(['id','jobId','question','questionType','options','required']);
 
@@ -133,9 +133,13 @@ export const JobSchema = z.object({
   description: z.string().min(1, "Job description is required"),
   responsibilities: z.string().min(1, {message: "Job requirements are required"}),
   requirements: z.string().min(1, {message: "Job requirements are required"}),
-  tags: z.array(z.string().min(1, "Job tags are required")).array(),
+  /**
+   * .array
+   */
+  tags: z.string().array(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  image: z.string().nullish(),
 })
 
 export type Job = z.infer<typeof JobSchema>

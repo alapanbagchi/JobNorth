@@ -9,3 +9,5 @@ general todo list:
 -   add /profile
 -   add /home
 -   fix fixed salary containing a min-max
+-   job recommendation algo
+-   client recommendation algo (just reverse of above for now)

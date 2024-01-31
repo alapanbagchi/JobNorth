@@ -12,6 +12,7 @@ const JobPostPage = () => {
 
     // TODO: add differing grid cols based on screen size
     // TODO: add 'showing jobs' and sort function (inspo: https://dribbble.com/shots/14145979-Job-Search-Platform/attachments/5770876?mode=media)
+
     return (
         <div className="bg-muted">
             <div className="flex w-full container">

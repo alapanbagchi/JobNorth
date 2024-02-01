@@ -252,31 +252,51 @@ export const JobBasicDetailsForm = () => {
                                     )}
                                 />
                             </div>
-                            <div className="grid gap-8 grid-cols-3">
-                                <FormField
-                                    control={methods.control}
-                                    name="salaryMin"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full">
-                                            <FormControl>
-                                                <Input type="number" label="Minimum Salary" placeholder="2000" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={methods.control}
-                                    name="salaryMax"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full">
-                                            <FormControl>
-                                                <Input type="number" label="Maximum Salary" placeholder="Ex. Galway, Ireland" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                            <div className="flex gap-8 w-full">
+                                {
+                                    methods.getValues().salaryType === "RANGE" ? (
+                                        <>
+                                            <FormField
+                                                control={methods.control}
+                                                name="salaryMin"
+                                                render={({ field }) => (
+                                                    <FormItem className="w-full">
+                                                        <FormControl>
+                                                            <Input type="number" label="Minimum Salary" placeholder="2000" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={methods.control}
+                                                name="salaryMax"
+                                                render={({ field }) => (
+                                                    <FormItem className="w-full">
+                                                        <FormControl>
+                                                            <Input type="number" label="Maximum Salary" placeholder="3000" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </>
+                                    ) : (
+                                        <FormField
+                                            control={methods.control}
+                                            name="salaryMin"
+                                            render={({ field }) => (
+                                                <FormItem className="w-full">
+                                                    <FormControl>
+                                                        <Input type="number" label="Salary" placeholder="3000" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )
+                                }
+
                                 <FormField
                                     control={methods.control}
                                     name="salaryInterval"

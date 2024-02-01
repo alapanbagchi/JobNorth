@@ -13,6 +13,7 @@ import { X } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { questionTypeList } from "@/lib/industriesList"
 import { useEffect } from "react"
+import { QuestionTypeSchema } from "@/prisma/generated/zod"
 
 export const JobApplicableQuestionsForm = () => {
     const methods = useFormContext()
@@ -24,7 +25,13 @@ export const JobApplicableQuestionsForm = () => {
                 {
                     methods.getValues("questions").map((item: any, index: number) => (
                         <div className="w-full border rounded-lg px-4 pb-6 pt-2 mb-4" key={index}>
-
+                            {(methods.formState.errors.questions as any)?.[index as number]?.options && (
+                                <div className="px-4 py-2 bg-destructive/20 flex items-center rounded-lg">
+                                    <p className="font-medium text-sm text-destructive">
+                                        {(methods.formState.errors.questions as any)[index].options?.message}
+                                    </p>
+                                </div>
+                            )}
                             <div className="flex justify-between px-1 items-center mb-2">
                                 <p className="text-base font-medium">Question {index + 1}</p>
                                 <Button size="icon" variant="ghost" onClick={() => methods.setValue("questions", methods.getValues("questions").filter((_: any, i: number) => i !== index))}>
@@ -57,7 +64,7 @@ export const JobApplicableQuestionsForm = () => {
                                                 </FormControl>
                                                 <SelectContent>
                                                     {
-                                                        questionTypeList.map((item, index) => (
+                                                        Object.values(QuestionTypeSchema.Values).map((item, index) => (
                                                             <SelectItem key={index} value={item}>{item}</SelectItem>
                                                         ))
                                                     }
@@ -68,7 +75,7 @@ export const JobApplicableQuestionsForm = () => {
                                     )}
                                 />
                             </div>
-                            {(item.questionType === "Multiple Choice" || item.questionType === "Single Choice") && (
+                            {(item.questionType === "MULTIPLE_CHOICE" || item.questionType === "SINGLE_CHOICE") && (
                                 <div>
                                     {
                                         item.options.map((option: any, optionIndex: number) => (

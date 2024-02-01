@@ -7,106 +7,145 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { JobDescriptionForm } from "@/components/Forms/JobDescriptionForm";
 import { JobApplicableQuestionsForm } from "@/components/Forms/JobApplicableQuestionsForm";
-import { JobSchema } from "@/prisma/generated/zod";
+import { JobOptionalDefaultsSchema, JobApplicantQuestionsOptionalDefaultsSchema, JobFAQOptionalDefaultsSchema, JobHiringProcessOptionalDefaultsSchema } from "@/prisma/generated/zod";
+import { z } from "zod";
+import { JobHiringProcessForm } from "@/components/Forms/JobHiringProcessForm";
 
-const formSteps = ["Basic Details", "Job Description", "Application Process", "Hiring Process", "Review & Post"];
+const formSteps = ["Basic Details", "Job Description", "Applicable Questions", "Hiring Process"];
 
 const JobPostPage = () => {
     const [step, setStep] = useState(0);
-    const methods = useForm({
-        resolver: zodResolver(JobSchema),
+
+    const mergedSchema = JobOptionalDefaultsSchema
+        .merge(
+            z.object({
+                salaryMax: z.coerce.number().nullable(),
+                questions: JobApplicantQuestionsOptionalDefaultsSchema.array().superRefine((questions, ctx) => {
+                    questions.forEach((question, questionIndex) => {
+                        if (question.questionType != "TEXT" && question.options.filter((option) => option !== "").length < 2) {
+                            ctx.addIssue({
+                                code: z.ZodIssueCode.custom,
+                                message: "Question must have at least 2 options",
+                                path: [questionIndex, "options"]
+                            })
+                        }
+                    });
+                }),
+                faqs: JobFAQOptionalDefaultsSchema.array().optional(),
+                hiringProcess: JobHiringProcessOptionalDefaultsSchema.array().optional(),
+            })
+        )
+    const jobPostFormMethods = useForm<z.infer<typeof mergedSchema>>({
+        resolver: zodResolver(mergedSchema),
         defaultValues: {
             title: "",
-            industry: "",
+            industry: "Animation_and_Graphic_Design",
             location: "",
-            locationPreference: "",
-            employmentType: "",
-            experienceLevel: "",
-            minimumQualification: "",
-            visaSponsorship: "false",
-            salaryType: "",
-            salaryMin: "",
+            locationPreference: "BOTH",
+            employmentType: "CONTRACT",
+            experienceLevel: "BEGINNER",
+            minimumQualification: "ASSOCIATE",
+            visaSponsorship: false,
+            salaryType: "FIXED",
+            salaryMin: undefined,
             questions: [
                 {
-                    questionType: "",
                     question: "",
-                    options: [""],
+                    questionType: "TEXT",
+                    options: [],
                 },
             ],
-            salaryMax: "",
-            salaryCurrency: "",
-            salaryInterval: "",
+            hiringProcess: [
+
+            ],
+            salaryMax: undefined,
+            salaryCurrency: "AUD",
+            salaryInterval: "HOURLY",
             facilities: [],
             description: "",
             responsibilities: "",
             requirements: "",
-            skills: "",
-            tags: "",
             faqs: [
                 {
                     question: "",
                     answer: "",
                 },
             ],
-            hiringProcess: [],
+
         },
         mode: "onChange",
     });
     useEffect(() => {
-        console.log(methods.getValues());
-        if (methods.formState.errors) {
-            console.log(methods.formState.errors);
+        if (jobPostFormMethods.formState.errors) {
+            console.log(jobPostFormMethods.formState.errors);
         }
-        methods.getValues("questions").forEach((item: any, index: number) => {
+        jobPostFormMethods.getValues("questions")?.forEach((item: any, index: number) => {
             if (item.options[item.options.length - 1] !== "") {
-                methods.setValue(`questions.${index}.options`, [...item.options, ""]);
+                jobPostFormMethods.setValue(`questions.${index}.options`, [...item.options, ""]);
             } else if (item.options.length > 1 && item.options[item.options.length - 2] === "") {
-                methods.setValue(`questions.${index}.options`, item.options.slice(0, item.options.length - 1));
+                jobPostFormMethods.setValue(`questions.${index}.options`, item.options.slice(0, item.options.length - 1));
             }
         });
-        return () => {};
-    }, [methods.watch(), methods.formState.isDirty]);
+        return () => { };
+    }, [jobPostFormMethods.watch()]);
 
     const onSubmit = async () => {
         switch (step) {
             case 0: {
-                const valid = await methods.trigger(
-                    [
-                        "title",
-                        "industry",
-                        "location",
-                        "locationPreference",
-                        "employmentType",
-                        "experienceLevel",
-                        "minimumQualification",
-                        "visaSponsorship",
-                        "salaryType",
-                        "salaryCurrency",
-                        "salaryMin",
-                        "salaryMax",
-                        "salaryInterval",
-                        "facilities",
-                    ],
+                let fieldsToBeValidated = [
+                    "title",
+                    "industry",
+                    "location",
+                    "locationPreference",
+                    "employmentType",
+                    "experienceLevel",
+                    "minimumQualification",
+                    "visaSponsorship",
+                    "salaryType",
+                    "salaryCurrency",
+                    "salaryMin",
+                    "salaryInterval",
+                    "facilities",
+                ]
+                jobPostFormMethods.getValues("salaryType") === "RANGE" ? (
+                    fieldsToBeValidated = [...fieldsToBeValidated, "salaryMax"]
+                ) : (
+                    fieldsToBeValidated.includes("salaryMax") && (fieldsToBeValidated = fieldsToBeValidated.filter((item) => item !== "salaryMax")),
+                    jobPostFormMethods.clearErrors("salaryMax")
+                )
+                const valid = await jobPostFormMethods.trigger(
+                    fieldsToBeValidated as any,
                     { shouldFocus: true }
                 );
+                if (jobPostFormMethods.getValues("salaryType") === "RANGE" && !jobPostFormMethods.getValues("salaryMax")) {
+                    jobPostFormMethods.setError("salaryMax", {
+                        message: "Maximum salary is required",
+                        type: "manual",
+                    });
+                }
+                if (jobPostFormMethods.getValues("salaryType") === "RANGE" && jobPostFormMethods.getValues("salaryMax") && parseInt(jobPostFormMethods.getValues("salaryMin") + '') > parseInt((jobPostFormMethods.getValues("salaryMax") as number || -1) + '')) {
+                    jobPostFormMethods.setError("salaryMax", {
+                        message: "Maximum salary must be greater than minimum salary",
+                        type: "manual",
+                    });
+                }
                 if (!valid) break;
                 setStep(step + 1);
                 break;
             }
             case 1:
-                const valid = await methods.trigger(["description", "responsibilities", "requirements", "faqs"], { shouldFocus: true });
+                const valid = await jobPostFormMethods.trigger(["description", "responsibilities", "requirements", "faqs"], { shouldFocus: true });
                 if (!valid) break;
                 setStep(step + 1);
                 break;
             case 2:
-                const valid2 = await methods.trigger(["questions"], { shouldFocus: true });
+                const valid2 = await jobPostFormMethods.trigger(["questions"], { shouldFocus: true });
                 if (!valid2) break;
                 setStep(step + 1);
                 break;
             case 3:
-                setStep(step + 1);
-                break;
-            case 4:
+                const valid3 = await jobPostFormMethods.trigger(["hiringProcess"], { shouldFocus: true });
+                if (!valid3) break;
                 setStep(step + 1);
                 break;
             default:
@@ -114,7 +153,6 @@ const JobPostPage = () => {
         }
     };
 
-    // TODO: step 3 && step 4
     return (
         <div className="bg-secondary flex flex-col justify-between items-between h-full min-h-[calc(100vw-900px)]">
             <div className="container py-4 flex gap-10 h-full min-w-[1000px] justify-between max-w-[1400px]">
@@ -122,12 +160,11 @@ const JobPostPage = () => {
                     <PostJobFormSteps steps={formSteps} />
                 </div>
                 <div className="bg-background p-6 h-fit rounded-lg w-full min-w-[700px]">
-                    <FormProvider {...methods}>
+                    <FormProvider {...jobPostFormMethods}>
                         {step === 0 && <JobBasicDetailsForm />}
                         {step === 1 && <JobDescriptionForm />}
                         {step === 2 && <JobApplicableQuestionsForm />}
-                        {step === 3 && <div>Hiring Process</div>}
-                        {step === 4 && <div>Review & Post</div>}
+                        {step === 3 && <JobHiringProcessForm />}
                     </FormProvider>
                 </div>
             </div>
@@ -140,7 +177,11 @@ const JobPostPage = () => {
                 >
                     Previous Step
                 </Button>
-                <Button onClick={onSubmit}>Next Step</Button>
+                <Button onClick={onSubmit}>
+                    {
+                        step === formSteps.length - 1 ? "Post Job" : "Next Step"
+                    }
+                </Button>
             </div>
         </div>
     );

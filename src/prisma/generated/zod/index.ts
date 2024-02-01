@@ -146,6 +146,14 @@ export const JobSchema = z.object({
 
 export type Job = z.infer<typeof JobSchema>
 
+/////////////////////////////////////////
+// JOB CUSTOM VALIDATORS SCHEMA
+/////////////////////////////////////////
+
+export const JobCustomValidatorsSchema = JobSchema.refine((data, ctx)=>{console.log(data)})
+
+export type JobCustomValidators = z.infer<typeof JobCustomValidatorsSchema>
+
 // JOB OPTIONAL DEFAULTS SCHEMA
 //------------------------------------------------------
 

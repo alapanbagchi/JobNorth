@@ -17,7 +17,9 @@ export const UserScalarFieldEnumSchema = z.enum(['id','name','email','emailVerif
 
 export const JobScalarFieldEnumSchema = z.enum(['id','industry','title','location','locationPreference','type','employmentType','experienceLevel','minimumQualification','visaSponsorship','salaryType','salaryMin','salaryMax','salaryCurrency','salaryInterval','facilities','description','responsibilities','requirements','tags','createdAt','updatedAt','image']);
 
-export const JobApplicantQuestionsScalarFieldEnumSchema = z.enum(['id','jobId','question','questionType','options','required']);
+export const JobHiringProcessScalarFieldEnumSchema = z.enum(['id','jobId','title','description']);
+
+export const JobApplicantQuestionsScalarFieldEnumSchema = z.enum(['id','jobId','question','questionType','options']);
 
 export const JobFAQScalarFieldEnumSchema = z.enum(['id','jobId','question','answer']);
 
@@ -128,7 +130,7 @@ export const JobSchema = z.object({
   type: z.string().min(1, "Job type is required"),
   visaSponsorship: z.coerce.boolean(),
   salaryMin: z.coerce.number().gte(1, "Salary is required"),
-  salaryMax: z.coerce.number().gte(1, "Salary is required"),
+  salaryMax: z.coerce.number().nullish(),
   facilities: z.string().array(),
   description: z.string().min(1, "Job description is required"),
   responsibilities: z.string().min(1, {message: "Job requirements are required"}),
@@ -156,16 +158,40 @@ export const JobOptionalDefaultsSchema = JobSchema.merge(z.object({
 export type JobOptionalDefaults = z.infer<typeof JobOptionalDefaultsSchema>
 
 /////////////////////////////////////////
+// JOB HIRING PROCESS SCHEMA
+/////////////////////////////////////////
+
+export const JobHiringProcessSchema = z.object({
+  id: z.string(),
+  // omitted: jobId: z.string(),
+  title: z.string().min(1, {message: "Title is required"}),
+  description: z.string().nullish(),
+})
+
+export type JobHiringProcess = z.infer<typeof JobHiringProcessSchema>
+
+// JOB HIRING PROCESS OPTIONAL DEFAULTS SCHEMA
+//------------------------------------------------------
+
+export const JobHiringProcessOptionalDefaultsSchema = JobHiringProcessSchema.merge(z.object({
+  id: z.string().optional(),
+}))
+
+export type JobHiringProcessOptionalDefaults = z.infer<typeof JobHiringProcessOptionalDefaultsSchema>
+
+/////////////////////////////////////////
 // JOB APPLICANT QUESTIONS SCHEMA
 /////////////////////////////////////////
 
 export const JobApplicantQuestionsSchema = z.object({
   questionType: QuestionTypeSchema,
   id: z.string(),
-  jobId: z.string(),
+  // omitted: jobId: z.string(),
   question: z.string().min(1, "Question is required"),
-  options: z.array(z.string()).refine((val) => val.length > 2, { message: "At least two options are required" }).refine((val) => { return val[val.length - 1] === ""}).array(),
-  required: z.boolean(),
+  /**
+   * .array
+   */
+  options: z.string().array(),
 })
 
 export type JobApplicantQuestions = z.infer<typeof JobApplicantQuestionsSchema>
@@ -185,7 +211,7 @@ export type JobApplicantQuestionsOptionalDefaults = z.infer<typeof JobApplicantQ
 
 export const JobFAQSchema = z.object({
   id: z.string(),
-  jobId: z.string(),
+  // omitted: jobId: z.string(),
   question: z.string().min(1, "Question is required"),
   answer: z.string().min(1, "Answer is required"),
 })

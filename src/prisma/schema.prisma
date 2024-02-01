@@ -1,4 +1,3 @@
-
 datasource db {
     provider = "postgresql"
     url      = env("POSTGRES_URL")
@@ -16,8 +15,8 @@ generator zod {
     createInputTypes                 = false
     createModelTypes                 = true
     addInputTypeValidation           = false
-    addIncludeType                   = false
-    addSelectType                    = false
+    addIncludeType                   = true
+    addSelectType                    = true
     validateWhereUniqueInput         = false
     createOptionalDefaultValuesTypes = true
     createRelationValuesTypes        = false
@@ -123,47 +122,55 @@ enum IndustryENUM {
 }
 
 model Job {
-    id                    String                  @id @default(uuid())
-    industry              IndustryENUM
-    title                 String /// @zod.custom.use(z.string().min(1, { message: "Job title is required" }))
-    location              String /// @zod.custom.use(z.string().min(1, "Location is required"))
-    locationPreference    LocationPreferenceENUM
-    type                  String /// @zod.custom.use(z.string().min(1, "Job type is required"))
-    employmentType        EmploymentTypeENUM
-    experienceLevel       ExperienceLevel
-    minimumQualification  MinimumQualification
-    visaSponsorship       Boolean /// @zod.custom.use(z.coerce.boolean())
-    salaryType            SalaryType
-    salaryMin             Int /// @zod.custom.use(z.coerce.number().gte(1, "Salary is required"))
-    salaryMax             Int /// @zod.custom.use(z.coerce.number().gte(1, "Salary is required"))
-    salaryCurrency        Currency
-    salaryInterval        SalaryInterval
-    facilities            String[]
-    description           String /// @zod.custom.use(z.string().min(1, "Job description is required"))
-    responsibilities      String /// @zod.string.min(1, {message: "Job requirements are required"})
-    requirements          String /// @zod.string.min(1, {message: "Job requirements are required"})
-    tags                  String[] /// @zod.string.array
-    createdAt             DateTime                @default(now())
-    updatedAt             DateTime                @updatedAt
-    JobApplicantQuestions JobApplicantQuestions[]
-    JobFAQ                JobFAQ[]
-    image                 String? 
+    id                   String                  @id @default(uuid())
+    industry             IndustryENUM
+    title                String /// @zod.custom.use(z.string().min(1, { message: "Job title is required" }))
+    location             String /// @zod.custom.use(z.string().min(1, "Location is required"))
+    locationPreference   LocationPreferenceENUM
+    type                 String /// @zod.custom.use(z.string().min(1, "Job type is required"))
+    employmentType       EmploymentTypeENUM
+    experienceLevel      ExperienceLevel
+    minimumQualification MinimumQualification
+    visaSponsorship      Boolean /// @zod.custom.use(z.coerce.boolean())
+    salaryType           SalaryType
+    salaryMin            Int /// @zod.custom.use(z.coerce.number().gte(1, "Salary is required"))
+    salaryMax            Int? /// @zod.custom.use(z.coerce.number())
+    salaryCurrency       Currency
+    salaryInterval       SalaryInterval
+    facilities           String[]
+    description          String /// @zod.custom.use(z.string().min(1, "Job description is required"))
+    responsibilities     String /// @zod.string.min(1, {message: "Job requirements are required"})
+    requirements         String /// @zod.string.min(1, {message: "Job requirements are required"})
+    tags                 String[] /// @zod.string.array
+    createdAt            DateTime                @default(now())
+    updatedAt            DateTime                @updatedAt
+    questions            JobApplicantQuestions[]
+    faqs                 JobFAQ[]
+    image                String?
+    hiringProcess        JobHiringProcess[]
+}
+
+model JobHiringProcess {
+    id          String  @id @default(uuid())
+    job         Job     @relation(fields: [jobId], references: [id])
+    jobId       String /// @zod.custom.omit([model, input])
+    title       String /// @zod.string.min(1, {message: "Title is required"})
+    description String?
 }
 
 model JobApplicantQuestions {
     id           String       @id @default(uuid())
     job          Job          @relation(fields: [jobId], references: [id])
-    jobId        String
+    jobId        String /// @zod.custom.omit([model, input])
     question     String /// @zod.custom.use(z.string().min(1, "Question is required"))
     questionType QuestionType
-    options      String[] /// @zod.custom.use(z.array(z.string()).refine((val) => val.length > 2, { message: "At least two options are required" }).refine((val) => { return val[val.length - 1] === ""}))
-    required     Boolean
+    options      String[] /// @zod.string.array
 }
 
 model JobFAQ {
     id       String @id @default(uuid())
     job      Job    @relation(fields: [jobId], references: [id])
-    jobId    String
+    jobId    String /// @zod.custom.omit([model, input])
     question String /// @zod.custom.use(z.string().min(1, "Question is required"))
     answer   String /// @zod.custom.use(z.string().min(1, "Answer is required"))
 }

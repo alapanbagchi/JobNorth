@@ -1,6 +1,8 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+//** NOTE: is this even viable with objectsoutside of many nested arrays? ? */
+export function twMergeImproved(...inputs: ClassValue[]) {
+    const result = twMerge(clsx(inputs));
+    return result;
 }

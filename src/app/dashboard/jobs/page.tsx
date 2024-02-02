@@ -1,5 +1,6 @@
 "use client";
 import JobCard from "@/components/Job/JobCard";
+import Sidebar from "@/components/Sidebar/shards/Sidebar";
 import { Job } from "@/prisma/generated/zod";
 import { getTest } from "@/utils";
 import { useEffect, useState } from "react";
@@ -16,7 +17,7 @@ const JobPostPage = () => {
     return (
         <div className="bg-muted">
             <div className="flex w-full container">
-                <div className="w-[300px] border border-r-2">SideBar</div>
+                <Sidebar className="w-[300px] border border-r-2" />
                 <div className="flex-1 grid grid-cols-3 gap-4">
                     {testArray.map((job, index) => (
                         <JobCard key={index} job={job} />

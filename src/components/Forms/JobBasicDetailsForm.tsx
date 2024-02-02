@@ -1,30 +1,31 @@
-"use client"
-import { useFormContext } from "react-hook-form"
+"use client";
+import { useFormContext } from "react-hook-form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "../ui/checkbox";
 import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { Input } from "../ui/input"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { jobFacilitiesList } from "@/lib/jobFacilitiesList"
-import { Checkbox } from "../ui/checkbox"
-import { CurrencySchema, EmploymentTypeENUMSchema, ExperienceLevelSchema, IndustryENUMSchema, LocationPreferenceENUMSchema, MinimumQualificationSchema, SalaryIntervalSchema, SalaryTypeSchema } from "@/prisma/generated/zod"
+    CurrencySchema,
+    EmploymentTypeENUMSchema,
+    ExperienceLevelSchema,
+    IndustryENUMSchema,
+    LocationPreferenceENUMSchema,
+    MinimumQualificationSchema,
+    SalaryIntervalSchema,
+    SalaryTypeSchema,
+} from "@/prisma/generated/zod";
+import { getList } from "@/lib/lists";
 
 export const JobBasicDetailsForm = () => {
-    const methods = useFormContext()
+    const methods = useFormContext();
+    const jobFacilitiesList = getList("jobFacilitiesList");
     return (
         <div>
             <h2 className="text-xl font-medium">Basic Details</h2>
-            <p className="text-sm text-muted-foreground py-3 mb-6 border-b-2">Please provide us with the basic details of your job. These details will be used to weed out candidates, so make sure that you provide accurate details. You can always edit it later</p>
+            <p className="text-sm text-muted-foreground py-3 mb-6 border-b-2">
+                Please provide us with the basic details of your job. These details will be used to weed out candidates, so make sure that
+                you provide accurate details. You can always edit it later
+            </p>
             <div className="grid grid-cols-2 gap-8">
                 <FormField
                     control={methods.control}
@@ -50,13 +51,11 @@ export const JobBasicDetailsForm = () => {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {
-                                        Object.values(IndustryENUMSchema?.Values)?.map((industry, index) => (
-                                            <SelectItem key={index} value={industry}>
-                                                {industry.replaceAll("_", " ")}
-                                            </SelectItem>
-                                        ))
-                                    }
+                                    {Object.values(IndustryENUMSchema?.Values)?.map((industry, index) => (
+                                        <SelectItem key={index} value={industry}>
+                                            {industry.replaceAll("_", " ")}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -79,7 +78,7 @@ export const JobBasicDetailsForm = () => {
                     control={methods.control}
                     name="locationPreference"
                     render={({ field }) => (
-                        <FormItem >
+                        <FormItem>
                             <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                     <SelectTrigger label="Location Preference">
@@ -87,12 +86,12 @@ export const JobBasicDetailsForm = () => {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {
-                                        Object.values(LocationPreferenceENUMSchema.Values).map((locationPreference, index) => (
-                                            <SelectItem key={index} value={locationPreference}>
-                                                {locationPreference.charAt(0).toUpperCase() + locationPreference.slice(1).toLowerCase().replace("_", "-")}</SelectItem>
-                                        ))
-                                    }
+                                    {Object.values(LocationPreferenceENUMSchema.Values).map((locationPreference, index) => (
+                                        <SelectItem key={index} value={locationPreference}>
+                                            {locationPreference.charAt(0).toUpperCase() +
+                                                locationPreference.slice(1).toLowerCase().replace("_", "-")}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -111,13 +110,12 @@ export const JobBasicDetailsForm = () => {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {
-                                        Object.values(EmploymentTypeENUMSchema.Values).map((employmentType, index) => (
-                                            <SelectItem key={index} value={employmentType}>
-                                                {employmentType.charAt(0).toUpperCase() + employmentType.slice(1).toLowerCase().replace("_", "-")}
-                                            </SelectItem>
-                                        ))
-                                    }
+                                    {Object.values(EmploymentTypeENUMSchema.Values).map((employmentType, index) => (
+                                        <SelectItem key={index} value={employmentType}>
+                                            {employmentType.charAt(0).toUpperCase() +
+                                                employmentType.slice(1).toLowerCase().replace("_", "-")}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -136,13 +134,12 @@ export const JobBasicDetailsForm = () => {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {
-                                        Object.values(ExperienceLevelSchema.Values).map((experienceLevel, index) => (
-                                            <SelectItem key={index} value={experienceLevel}>
-                                                {experienceLevel.charAt(0).toUpperCase() + experienceLevel.slice(1).toLowerCase().replace("_", " ")}
-                                            </SelectItem>
-                                        ))
-                                    }
+                                    {Object.values(ExperienceLevelSchema.Values).map((experienceLevel, index) => (
+                                        <SelectItem key={index} value={experienceLevel}>
+                                            {experienceLevel.charAt(0).toUpperCase() +
+                                                experienceLevel.slice(1).toLowerCase().replace("_", " ")}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -161,13 +158,11 @@ export const JobBasicDetailsForm = () => {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {
-                                        Object.values(MinimumQualificationSchema.Values).map((qualification, index) => (
-                                            <SelectItem key={index} value={qualification}>
-                                                {qualification.charAt(0).toUpperCase() + qualification.slice(1).toLowerCase().replace("_", " ")}
-                                            </SelectItem>
-                                        ))
-                                    }
+                                    {Object.values(MinimumQualificationSchema.Values).map((qualification, index) => (
+                                        <SelectItem key={index} value={qualification}>
+                                            {qualification.charAt(0).toUpperCase() + qualification.slice(1).toLowerCase().replace("_", " ")}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -196,7 +191,9 @@ export const JobBasicDetailsForm = () => {
                 />
                 <div className="col-span-2">
                     <h2 className="text-xl font-medium">Salary & Facilities</h2>
-                    <p className="text-sm text-muted-foreground py-3 mb-4 border-b-2">Please provide us information about the salary and the kinds of facilities you are going to pay to your employees</p>
+                    <p className="text-sm text-muted-foreground py-3 mb-4 border-b-2">
+                        Please provide us information about the salary and the kinds of facilities you are going to pay to your employees
+                    </p>
                     <div>
                         <p className="font-medium text-lg mb-4">Salary</p>
                         <div className="flex flex-col w-full gap-6 mb-6">
@@ -213,13 +210,12 @@ export const JobBasicDetailsForm = () => {
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent defaultValue="range">
-                                                    {
-                                                        Object.values(SalaryTypeSchema.Values).map((salaryType, index) => (
-                                                            <SelectItem key={index} value={salaryType}>
-                                                                {salaryType.charAt(0).toUpperCase() + salaryType.slice(1).toLowerCase().replace("_", " ")}
-                                                            </SelectItem>
-                                                        ))
-                                                    }
+                                                    {Object.values(SalaryTypeSchema.Values).map((salaryType, index) => (
+                                                        <SelectItem key={index} value={salaryType}>
+                                                            {salaryType.charAt(0).toUpperCase() +
+                                                                salaryType.slice(1).toLowerCase().replace("_", " ")}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -238,13 +234,11 @@ export const JobBasicDetailsForm = () => {
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent defaultValue="eur">
-                                                    {
-                                                        Object.values(CurrencySchema.Values).map((currency, index) => (
-                                                            <SelectItem key={index} value={currency}>
-                                                                {currency}
-                                                            </SelectItem>
-                                                        ))
-                                                    }
+                                                    {Object.values(CurrencySchema.Values).map((currency, index) => (
+                                                        <SelectItem key={index} value={currency}>
+                                                            {currency}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -253,49 +247,47 @@ export const JobBasicDetailsForm = () => {
                                 />
                             </div>
                             <div className="flex gap-8 w-full">
-                                {
-                                    methods.getValues().salaryType === "RANGE" ? (
-                                        <>
-                                            <FormField
-                                                control={methods.control}
-                                                name="salaryMin"
-                                                render={({ field }) => (
-                                                    <FormItem className="w-full">
-                                                        <FormControl>
-                                                            <Input type="number" label="Minimum Salary" placeholder="2000" {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={methods.control}
-                                                name="salaryMax"
-                                                render={({ field }) => (
-                                                    <FormItem className="w-full">
-                                                        <FormControl>
-                                                            <Input type="number" label="Maximum Salary" placeholder="3000" {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </>
-                                    ) : (
+                                {methods.getValues().salaryType === "RANGE" ? (
+                                    <>
                                         <FormField
                                             control={methods.control}
                                             name="salaryMin"
                                             render={({ field }) => (
                                                 <FormItem className="w-full">
                                                     <FormControl>
-                                                        <Input type="number" label="Salary" placeholder="3000" {...field} />
+                                                        <Input type="number" label="Minimum Salary" placeholder="2000" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
-                                    )
-                                }
+                                        <FormField
+                                            control={methods.control}
+                                            name="salaryMax"
+                                            render={({ field }) => (
+                                                <FormItem className="w-full">
+                                                    <FormControl>
+                                                        <Input type="number" label="Maximum Salary" placeholder="3000" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </>
+                                ) : (
+                                    <FormField
+                                        control={methods.control}
+                                        name="salaryMin"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormControl>
+                                                    <Input type="number" label="Salary" placeholder="3000" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
 
                                 <FormField
                                     control={methods.control}
@@ -309,13 +301,12 @@ export const JobBasicDetailsForm = () => {
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    {
-                                                        Object.values(SalaryIntervalSchema.Values).map((salaryInterval, index) => (
-                                                            <SelectItem key={index} value={salaryInterval}>
-                                                                {salaryInterval.charAt(0).toUpperCase() + salaryInterval.slice(1).toLowerCase().replace("_", " ")}
-                                                            </SelectItem>
-                                                        ))
-                                                    }
+                                                    {Object.values(SalaryIntervalSchema.Values).map((salaryInterval, index) => (
+                                                        <SelectItem key={index} value={salaryInterval}>
+                                                            {salaryInterval.charAt(0).toUpperCase() +
+                                                                salaryInterval.slice(1).toLowerCase().replace("_", " ")}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -338,30 +329,23 @@ export const JobBasicDetailsForm = () => {
                                                 name={`facilities`}
                                                 render={({ field }) => {
                                                     return (
-                                                        <FormItem
-                                                            key={index}
-                                                            className="flex flex-row items-center gap-2 space-y-0"
-                                                        >
+                                                        <FormItem key={index} className="flex flex-row items-center gap-2 space-y-0">
                                                             <FormControl>
                                                                 <Checkbox
                                                                     checked={field.value?.includes(item)}
                                                                     onCheckedChange={(checked) => {
-                                                                        console.log(field.value)
+                                                                        console.log(field.value);
                                                                         return checked
                                                                             ? field.onChange([...field.value, item])
                                                                             : field.onChange(
-                                                                                field.value?.filter(
-                                                                                    (value: string) => value !== item
-                                                                                )
-                                                                            )
+                                                                                  field.value?.filter((value: string) => value !== item)
+                                                                              );
                                                                     }}
                                                                 />
                                                             </FormControl>
-                                                            <FormLabel className="text-sm font-normal mt-0">
-                                                                {item}
-                                                            </FormLabel>
+                                                            <FormLabel className="text-sm font-normal mt-0">{item}</FormLabel>
                                                         </FormItem>
-                                                    )
+                                                    );
                                                 }}
                                             />
                                         ))}
@@ -373,6 +357,6 @@ export const JobBasicDetailsForm = () => {
                     </div>
                 </div>
             </div>
-        </div >
-    )
-}
+        </div>
+    );
+};

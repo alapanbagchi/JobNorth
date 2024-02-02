@@ -1,4 +1,7 @@
-export const industriesList = [
+const experienceLevelList = ["Beginner", "Intermediate", "Expert"] as const;
+const employmentTypeList = ["Full-time", "Part-time", "Contract", "Temporary", "Internship", "Volunteer", "Other"] as const;
+
+const industriesList = [
     "Software Development",
     "Medical & Healthcare",
     "Financial Services",
@@ -48,26 +51,29 @@ export const industriesList = [
     "Renewable Energy",
     "Biotechnology",
     "Art & Crafts",
-    "Gaming & Interactive"
-] as const
+    "Gaming & Interactive",
+] as const;
 
-export const employmentTypeList = [
-    "Full-time",
-    "Part-time",
-    "Contract",
-    "Temporary",
-    "Internship",
-    "Volunteer",
-    "Other"
-] as const
+const jobFacilitiesList = [
+    "Bonus",
+    "Comission",
+    "Paid Overtime",
+    "Medical Cover",
+    "Dental Care",
+    "Life Insurance",
+    "Eye Care",
+    "Company Car",
+    "Travel Expenses",
+    "Share Plan",
+    "Flexible Working Hours",
+    "Car Allowance",
+    "Subsidized Food",
+    "Shipping/Retail Discount",
+    "Gym Membership",
+    "Private Pension",
+];
 
-export const experienceLevelList = [
-    "Beginner",
-    "Intermediate",
-    "Expert",
-] as const
-
-export const minimumQualifications = [
+const minimumQualifications = [
     "High school diploma or equivalent",
     "Bachelor's degree in a related field",
     "Master's degree in a related field",
@@ -75,11 +81,18 @@ export const minimumQualifications = [
     "Relevant certification",
     "Relevant license",
     "Relevant work experience",
-    "Other"
-] as const
+    "Other",
+] as const;
 
-export const questionTypeList = [
-    "Multiple Choice",
-    "Single Choice",
-    "Text Answer",
-] as const
+const questionTypeList = ["Multiple Choice", "Single Choice", "Text Answer"] as const;
+
+const lists = {
+    employmentTypeList,
+    experienceLevelList,
+    industriesList,
+    jobFacilitiesList,
+    minimumQualifications,
+    questionTypeList,
+} as const;
+
+export const getList = <T extends keyof typeof lists>(list: T) => lists[list];
